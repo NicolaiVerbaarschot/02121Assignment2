@@ -1,13 +1,14 @@
-    @R0
-    M=0     // set n=0 initially
     @10     // set n 
     D=A
+
     @R0
     M=D     // R0=n=10
     M=M-1   // n-1
     M=M-1   // n-1 // Once for formula, twice for correcting loop
+   
     @R1
     M=1     // set sum
+
 (LOOP)
     @R1
     D=M
@@ -23,6 +24,7 @@
 
     @LOOP
     0;JMP
+    
 (END)
     @END
     0;JMP
