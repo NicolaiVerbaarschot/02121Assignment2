@@ -43,40 +43,28 @@ CHIP ALU {
 
     PARTS:
 //zx
-   Or8Way(in = x[0..7], out = a);
-   Or8Way(in = x[8..15], out = b);
-   Or(a = a, b = b, out = selx);
-   Not16(in = x, out = zerox1);
-   Mux16(a = zerox1, b = x, sel = selx, out = zerox2);
-   Mux16(a = zerox2, b = x, sel = zx, out = zerx);
+   Mux16(a = x, b = false, sel = zx, out = outzx);
 //zy
-   Or8Way(in = y[0..7], out = c);
-   Or8Way(in = y[8..15], out = d);
-   Or(a = c, b = d, out = sely);
-   Not16(in = x, out = zeroy1);
-   Mux16(a = zeroy1, b = y, sel = sely, out = zeroy2);
-   Mux16(a = zeroy2, b = y, sel = zy, out = zery);
+   Mux16(a = y, b =false, sel = zy, out = outzy);
 //nx
-   Not16(in = zerx, out = notx);
-   Mux16(a = notx, b = zerx, sel = nx, out = ntx);
+   Not16(in = outzx, out = notx);
+   Mux16(a = outzx, b = notx, sel = nx, out = ntx);
 //ny
-   Not16(in = zery, out = noty);
-   Mux16(a = noty, b = zery, sel = ny, out = nty);
+   Not16(in = outzy, out = noty);
+   Mux16(a = outzy, b = noty, sel = ny, out = nty);
 //f
    And16(a = ntx, b = nty, out = xogy);
    Add16(a = ntx, b = nty, out = sum);
-   Mux16(a = sum, b = xogy, sel = f, out = outf);
+   Mux16(a = xogy, b = sum, sel = f, out = outf);
 //no
-   Not16(in = outf, out = notout);
-   Mux16(a = outf, b = notout, sel = no, out = ntout, out = out, out[0] = isng);
+   Not16(in = outf, out = negout);
+   Mux16(a = outf, b=negout, sel = no, out = ntout, out = out, out[0..7]=out1, out[8..15]=out2, out[15] = ng);
 //zr
-   Not16(in = ntout, out = ones);
-   And16(a = ones, b = true, out[0..7] = outzr1, out[8..15]=outzr2);
-   Or8Way(in = outzr1, out = e);
-   Or8Way(in = outzr2, out = g);
-   Or(a = e, b = g, out = selzr);
-   Mux(a = true, b = selzr, sel = selzr, out = zr);
+  
+   Or8Way(in = out1, out = outzr1);
+   Or8Way(in = out2, out = outzr2);
+   Or(a = outzr1, b = outzr2, out = outzr3);
+   Not(in = outzr3, out=zr);
+   
 
-//ng
-   And(a = true, b = isng, out=ng);
 }
